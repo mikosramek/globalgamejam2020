@@ -6,10 +6,12 @@ AnimatorOverrideController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: cat
+  m_Name: cat2
   m_Controller: {fileID: 9100000, guid: 85d1207991c1e374cacefdc40495a73c, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: 1575960118e6cd34e9b1459464a0482f, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: ae3489019bc528b458fe5b4c4122536b, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 96d687506b1dc4c48afb72cb99702e7f, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 6f41db551b813d141889b7590d7e1ea8, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: ada2cb1a515bb62459b9fa9d5ca8741e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 0bd110921ba7ac04e83015f3d7b2c470, type: 2}

@@ -10,13 +10,14 @@ public class MouseBehaviour : MonoBehaviour
     public List<GameObject> cameraIndicators;
     public CameraColliderLogic cameraCollider;
 
-    bool takeAPhoto = false;
-
     public RoomNode[] roomNodes;
     public int currentRoom = 0;
 
     public Instagram insta;
-    
+
+    public AnimationCurve movementCurve;
+
+
     void Start()
     {
         if(cameraIndicators != null && cameraIndicators.Count == 4)
@@ -45,7 +46,35 @@ public class MouseBehaviour : MonoBehaviour
             }
         }
     }
-    
+
+    public void ChangeRoom(int direction)
+    {
+        if(currentRoom + direction != -1 && currentRoom + direction < roomNodes.Length)
+        {
+            currentRoom += direction;
+            StartCoroutine(moveCamera());
+        }
+    }
+    IEnumerator moveCamera()
+    {
+        Vector3 target = roomNodes[currentRoom].transform.position;
+        target.z = mainCam.transform.position.z;
+        Vector3 start = mainCam.transform.position;
+        bool isLerping = true;
+        float t = 0;
+        float duration = 1;
+        while (isLerping)
+        {
+            t += Time.deltaTime;
+            float s = t / duration;
+            mainCam.transform.position = Vector3.Lerp(start, target, movementCurve.Evaluate(s));
+            if (s >= 1.0f)
+            {
+                isLerping = false;
+            }
+            yield return new WaitForEndOfFrame();
+        }       
+    }
     void takePhoto(CatBehaviour cat)
     {
         //cat scale -> facing direction

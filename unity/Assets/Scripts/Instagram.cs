@@ -13,17 +13,25 @@ public class Instagram : MonoBehaviour
     {
         catCount = 0;
     }
+
+    public float rerange(float OldValue, float OldMin, float OldMax, float NewMin, float NewMax)
+    {
+        return (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin;
+    }
+
     public void CreateAPhoto(float catDir, Vector2 catPos, Sprite catSprite, Vector2 cameraPos, Sprite roomSprite, mood catMood, Sprite blurryCat)
     {
-        GameObject newPhoto = Instantiate(PhotoPrefab, new Vector3(200 * catCount, 0), Quaternion.identity);
+        GameObject newPhoto = Instantiate(PhotoPrefab, Vector3.zero, Quaternion.identity);
         newPhoto.transform.SetParent(canvas);
-        GameObject bg = newPhoto.transform.GetChild(0).transform.GetChild(0).gameObject;
-        GameObject cat = newPhoto.transform.GetChild(0).transform.GetChild(1).gameObject;
+        GameObject bg = newPhoto.transform.GetChild(1).transform.GetChild(0).gameObject;
+        GameObject cat = newPhoto.transform.GetChild(1).transform.GetChild(1).gameObject;
 
         cat.GetComponent<Image>().sprite = catSprite;
-        cat.GetComponent<RectTransform>().localScale = new Vector3(catDir, 1);
-        cat.GetComponent<RectTransform>().localPosition = (cameraPos - catPos) * -30;
-        bg.GetComponent<RectTransform>().localPosition = (cameraPos) * -25;
+        RectTransform catRect = cat.GetComponent<RectTransform>();
+        catRect.localScale = new Vector3(catRect.localScale.x * catDir, catRect.localScale.y);
+        Vector3 catDif = cameraPos - catPos;
+        catRect.localPosition = new Vector3(-rerange(catDif.x, -5, 5, -115, 115), -rerange(catDif.y, -5, 5, -115, 115));
+        bg.GetComponent<RectTransform>().localPosition = new Vector3(-rerange(cameraPos.x, -9, 9, -420, 420), -rerange(cameraPos.y, -5, 5, -205, 205));
         bg.GetComponent<Image>().sprite = roomSprite;
         int likes = 0;
         switch (catMood)
@@ -32,14 +40,14 @@ public class Instagram : MonoBehaviour
                 likes = Random.Range(5000, 12938);
                 break;
             case mood.moving:
-                likes = Random.Range(0, 150);
+                likes = Random.Range(0, 50);
                 cat.GetComponent<Image>().sprite = blurryCat;
                 break;
             case mood.sitting:
                 likes = Random.Range(300, 2000);
                 break;
         }
-        newPhoto.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = ""+likes;
+        newPhoto.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = ""+likes;
 
         catCount++;
     }
