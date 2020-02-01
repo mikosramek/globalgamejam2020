@@ -27,10 +27,10 @@ public class CatBehaviour : MonoBehaviour
     public Vector2 movementTimeRange;
     public Vector2 boredTimeRange;
 
+
     void Start()
     {
         catNodes = rooms[currentRoom].nodes;
-        
         moveToNewSpot();
     }
 
@@ -105,15 +105,15 @@ public class CatBehaviour : MonoBehaviour
         //roughly between 5 to 10 seconds
         movementTimeTarget = Random.Range(60 * movementTimeRange.x, 60 * movementTimeRange.y);
     }
-    void flipSprite(Vector2 dist)
+    void flipSprite(Vector2 dist, float factor)
     {
         if (dist.x < 0)
         {
-            transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);
+            transform.localScale = new Vector3(-factor, factor, transform.localScale.z);
         }
         else
         {
-            transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z);
+            transform.localScale = new Vector3(factor, factor, transform.localScale.z);
         }
     }
     IEnumerator moveToSpot(CatNode node)
@@ -121,11 +121,13 @@ public class CatBehaviour : MonoBehaviour
         
         animator.ResetTrigger("chill");
         animator.SetTrigger("run");
+        float scale = Mathf.Abs(transform.localScale.x);
         while (transform.position != node.floorPoint.transform.position)
         {
             transform.position = Vector3.MoveTowards(transform.position, node.floorPoint.transform.position, 0.1f);
             Vector2 dist = transform.position - node.floorPoint.transform.position;
-            flipSprite(dist);
+            scale = Mathf.MoveTowards(scale, 1, 0.01f);
+            flipSprite(dist, scale);
             if (dist.magnitude <= 0.1f)
             {
                 transform.position = node.floorPoint.transform.position;
@@ -134,11 +136,13 @@ public class CatBehaviour : MonoBehaviour
             }
             yield return new WaitForEndOfFrame();
         }
+        scale = Mathf.Abs(transform.localScale.x);
         while (transform.position != node.gameObject.transform.position)
         {
             transform.position = Vector3.MoveTowards(transform.position, node.gameObject.transform.position, 0.1f);
+            scale = Mathf.MoveTowards(scale, node.scaleFactor, 0.01f);
             Vector2 dist = transform.position - node.gameObject.transform.position;
-            flipSprite(dist);
+            flipSprite(dist, scale);
             if (dist.magnitude <= 0.1f)
             {
                 transform.position = node.gameObject.transform.position;
@@ -241,7 +245,7 @@ public class CatBehaviour : MonoBehaviour
         {
             transform.position = Vector3.MoveTowards(transform.position, target.position, 0.1f);
             Vector2 dist = transform.position - target.position;
-            flipSprite(dist);
+            flipSprite(dist, 1);
             if (Mathf.Abs(dist.magnitude) <= 0.1f)
             {
                 Debug.Log("done moving to" + target);

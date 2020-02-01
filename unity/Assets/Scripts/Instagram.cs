@@ -8,6 +8,8 @@ public class Instagram : MonoBehaviour
 {
     public Transform canvas;
     public GameObject PhotoPrefab;
+
+    public RectTransform scrollViewContent;
     int catCount;
     private void Start()
     {
@@ -50,6 +52,7 @@ public class Instagram : MonoBehaviour
         newPhoto.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = ""+likes;
 
         catCount++;
+        scrollViewContent.sizeDelta = new Vector2(scrollViewContent.sizeDelta.x, 225 + 225 * (int)(catCount - 1 / 4));
     }
 }
 

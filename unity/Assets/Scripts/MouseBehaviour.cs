@@ -18,6 +18,8 @@ public class MouseBehaviour : MonoBehaviour
     public AnimationCurve movementCurve;
 
 
+    public GameObject instagramOverlay, menuOverlay;
+
     void Start()
     {
         if(cameraIndicators != null && cameraIndicators.Count == 4)
@@ -35,7 +37,7 @@ public class MouseBehaviour : MonoBehaviour
         Vector2 mosPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         transform.position = mosPos;
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && !instagramOverlay.activeSelf && !menuOverlay.activeSelf)
         {
             GameObject cat = cameraCollider.getCurrentCat();
             if(cat != null)
