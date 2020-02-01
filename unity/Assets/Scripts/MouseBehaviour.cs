@@ -10,6 +10,12 @@ public class MouseBehaviour : MonoBehaviour
     public List<GameObject> cameraIndicators;
     public CameraColliderLogic cameraCollider;
 
+    bool takeAPhoto = false;
+
+    public RoomNode[] roomNodes;
+    public int currentRoom = 0;
+
+    public Instagram insta;
     
     void Start()
     {
@@ -22,8 +28,7 @@ public class MouseBehaviour : MonoBehaviour
         }
         if(cameraCollider != null) { cameraCollider.gameObject.transform.localScale = new Vector2(cameraRadius*2, cameraRadius*2); }
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         Vector2 mosPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
@@ -31,8 +36,31 @@ public class MouseBehaviour : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
-            CatBehaviour currentCat = cameraCollider.getCurrentCat().GetComponent<CatBehaviour>();
-            currentCat.pictureTaken();
+            GameObject cat = cameraCollider.getCurrentCat();
+            if(cat != null)
+            {
+                CatBehaviour currentCat = cat.GetComponent<CatBehaviour>();
+                takePhoto(currentCat);
+                currentCat.pictureTaken();
+            }
         }
+    }
+    
+    void takePhoto(CatBehaviour cat)
+    {
+        //cat scale -> facing direction
+        float catDir = cat.gameObject.transform.localScale.x;
+        //cat position relative to 0 of room
+        Vector2 catPos = cat.gameObject.transform.position;
+        //their sprite from the child
+        Sprite catSprite = cat.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
+        //camera position relative to 0 of room
+        Vector2 cameraPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        //which room
+        Sprite roomSprite = roomNodes[currentRoom].roomSprite;
+        //cat mood
+        mood catMood = cat.currentMood;
+        //Hand off the data
+        insta.CreateAPhoto(catDir, catPos, catSprite, cameraPos, roomSprite, catMood, cat.blurryCat);
     }
 }

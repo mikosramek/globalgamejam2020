@@ -1,23 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum mood
+{
+    sitting,
+    moving,
+    bored
+}
 public class CatBehaviour : MonoBehaviour
 {
-    public GameObject[] catNodes;
-
-    public enum mood {
-        sitting,
-        moving,
-        bored
-    }
-
-    public CatNode currentNode;
+    private GameObject[] catNodes;
+    private CatNode currentNode;
 
     public mood currentMood = mood.moving;
 
 
     public Animator animator;
+    public Sprite blurryCat;
 
     void Start()
     {
@@ -60,20 +59,44 @@ public class CatBehaviour : MonoBehaviour
         }
         else { actBored(); };
     }
-
+    void flipSprite(Vector2 dist)
+    {
+        if (dist.x < 0)
+        {
+            transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);
+        }
+        else
+        {
+            transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z);
+        }
+    }
     IEnumerator moveToSpot(CatNode node)
     {
         animator.SetTrigger("run");
-        while (transform.position != node.gameObject.transform.position)
+        while (transform.position != node.floorPoint.transform.position)
         {
-            transform.position = Vector3.MoveTowards(transform.position, node.gameObject.transform.position, 0.1f);
-            if((transform.position - node.gameObject.transform.position).magnitude <= 0.1f)
+            transform.position = Vector3.MoveTowards(transform.position, node.floorPoint.transform.position, 0.1f);
+            Vector2 dist = transform.position - node.floorPoint.transform.position;
+            flipSprite(dist);
+            if (dist.magnitude <= 0.1f)
             {
-                transform.position = node.gameObject.transform.position;
+                transform.position = node.floorPoint.transform.position;
+                animator.SetTrigger("jump");
             }
             yield return new WaitForEndOfFrame();
         }
-        animator.SetTrigger("chill");
+        while (transform.position != node.gameObject.transform.position)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, node.gameObject.transform.position, 0.1f);
+            Vector2 dist = transform.position - node.gameObject.transform.position;
+            flipSprite(dist);
+            if (dist.magnitude <= 0.1f)
+            {
+                transform.position = node.gameObject.transform.position;
+                animator.SetTrigger("chill");
+            }
+            yield return new WaitForEndOfFrame();
+        }
         currentMood = mood.sitting;
     }
     void actBored()
