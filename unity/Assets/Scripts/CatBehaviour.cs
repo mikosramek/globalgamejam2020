@@ -188,7 +188,6 @@ public class CatBehaviour : MonoBehaviour
         if (nextRoomIndex < rooms.Length && currentRoom != 0)
         {
             float choice = Random.Range(0, 1f);
-            Debug.Log(choice);
             if (choice < 0.5f)
             {
                 nextRoomIndex = currentRoom - 1;               
@@ -207,7 +206,6 @@ public class CatBehaviour : MonoBehaviour
     {
         // + is right
         // - is left
-        Debug.Log(dir);
         Transform target = currentRoom.movementNodeLeft.transform;
         if(dir < 0)
         {
@@ -240,7 +238,6 @@ public class CatBehaviour : MonoBehaviour
     }
     IEnumerator moveToNode(Transform target)
     {
-        Debug.Log("moving to" + target);
         while (transform.position != target.position)
         {
             transform.position = Vector3.MoveTowards(transform.position, target.position, 0.1f);
@@ -248,7 +245,6 @@ public class CatBehaviour : MonoBehaviour
             flipSprite(dist, 1);
             if (Mathf.Abs(dist.magnitude) <= 0.1f)
             {
-                Debug.Log("done moving to" + target);
                 transform.position = target.position;
             }
             yield return new WaitForEndOfFrame();

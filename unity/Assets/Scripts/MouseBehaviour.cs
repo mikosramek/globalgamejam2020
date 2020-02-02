@@ -18,7 +18,9 @@ public class MouseBehaviour : MonoBehaviour
     public AnimationCurve movementCurve;
 
 
-    public GameObject instagramOverlay, menuOverlay;
+    public GameObject instagramOverlay, menuOverlay, rounderOverOverlay;
+
+    public Animator cameraIndicator;
 
     void Start()
     {
@@ -37,14 +39,22 @@ public class MouseBehaviour : MonoBehaviour
         Vector2 mosPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         transform.position = mosPos;
 
-        if (Input.GetButtonDown("Fire1") && !instagramOverlay.activeSelf && !menuOverlay.activeSelf)
+        if (Input.GetButtonDown("Fire1") && !instagramOverlay.activeSelf && !menuOverlay.activeSelf && !rounderOverOverlay.activeSelf)
         {
-            GameObject cat = cameraCollider.getCurrentCat();
-            if(cat != null)
+            List<GameObject> cats = cameraCollider.getCurrentCat();
+            if(cats.Count > 0)
             {
-                CatBehaviour currentCat = cat.GetComponent<CatBehaviour>();
-                takePhoto(currentCat);
-                currentCat.pictureTaken();
+                List<CatBehaviour> catBehavs = new List<CatBehaviour>();
+                foreach(var cat in cats)
+                {
+                    CatBehaviour catBehav = cat.GetComponent<CatBehaviour>();
+                    catBehavs.Add(catBehav);
+                }
+                takePhoto(catBehavs);
+                foreach (var cat in catBehavs)
+                {
+                    cat.pictureTaken();
+                }
             }
         }
     }
@@ -77,21 +87,17 @@ public class MouseBehaviour : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }       
     }
-    void takePhoto(CatBehaviour cat)
+    void takePhoto(List<CatBehaviour> cats)
     {
-        //cat scale -> facing direction
-        float catDir = cat.gameObject.transform.localScale.x;
-        //cat position relative to 0 of room
-        Vector2 catPos = cat.gameObject.transform.position;
-        //their sprite from the child
-        Sprite catSprite = cat.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
+        cameraIndicator.SetTrigger("snap");
         //camera position relative to 0 of room
         Vector2 cameraPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         //which room
         Sprite roomSprite = roomNodes[currentRoom].roomSprite;
         //cat mood
-        mood catMood = cat.currentMood;
+        //room pos
+        Vector2 roomPos = roomNodes[currentRoom].transform.position;
         //Hand off the data
-        insta.CreateAPhoto(catDir, catPos, catSprite, cameraPos, roomSprite, catMood, cat.blurryCat);
+        insta.CreateAPhoto(cats, cameraPos, roomSprite, roomPos);
     }
 }
