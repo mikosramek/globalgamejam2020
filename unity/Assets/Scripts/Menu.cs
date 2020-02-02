@@ -8,19 +8,23 @@ using TMPro;
 public class Menu : MonoBehaviour
 {
     public GameObject resumeButton;
-    public TextMeshProUGUI playButtonText;
+    public GameObject playButton;
+    public GameObject restartButton;
+
     public GameObject overlay;
     public GameObject RoundOverOverlay;
     bool hasStarted, paused, gameOver;
 
     public float roundTime;
     private float currentTimeLeft;
-    public TextMeshProUGUI timeLeftText;
+    public TextMeshPro timeLeftInGame;
 
     public float timeoutThreshold;
     private float timeoutCounter;
     bool fadingTimeout;
     public CanvasGroup canvas;
+
+    public RectTransform phone, endGameTarget;
 
     private void Start()
     {
@@ -36,13 +40,15 @@ public class Menu : MonoBehaviour
             if (currentTimeLeft > 0)
             {
                 currentTimeLeft -= Time.deltaTime;
-                timeLeftText.text = "" + Mathf.Floor(currentTimeLeft) + "s";
+                timeLeftInGame.text = "" + Mathf.Floor(currentTimeLeft) + "s";
             }
             else
             {
+                currentTimeLeft = 0;
+                timeLeftInGame.text = "0s";
                 gameOver = true;
-                timeLeftText.gameObject.SetActive(false);
                 RoundOverOverlay.SetActive(true);
+                phone.position = endGameTarget.position;
             }
         }
         if (Input.GetButtonDown("Escape"))
@@ -82,11 +88,9 @@ public class Menu : MonoBehaviour
         //if true already then restart the scene
         if (hasStarted) { SceneManager.LoadScene(0);  }
         hasStarted = true;
-        playButtonText.text = "Restart";
-        //show resume button
+        playButton.SetActive(false);
         resumeButton.SetActive(true);
-        //show timer
-        timeLeftText.gameObject.SetActive(true);
+        restartButton.SetActive(true);
         //hide menu       
         overlay.SetActive(false);
         paused = false;

@@ -6,7 +6,6 @@ public class MouseBehaviour : MonoBehaviour
 {
 
     public Camera mainCam;
-    public float cameraRadius = 10;
     public List<GameObject> cameraIndicators;
     public CameraColliderLogic cameraCollider;
 
@@ -22,17 +21,7 @@ public class MouseBehaviour : MonoBehaviour
 
     public Animator cameraIndicator;
 
-    void Start()
-    {
-        if(cameraIndicators != null && cameraIndicators.Count == 4)
-        {
-            cameraIndicators[0].transform.localPosition = new Vector2(-cameraRadius, -cameraRadius);
-            cameraIndicators[1].transform.localPosition = new Vector2(cameraRadius, -cameraRadius);
-            cameraIndicators[2].transform.localPosition = new Vector2(cameraRadius, cameraRadius);
-            cameraIndicators[3].transform.localPosition = new Vector2(-cameraRadius, cameraRadius);
-        }
-        if(cameraCollider != null) { cameraCollider.gameObject.transform.localScale = new Vector2(cameraRadius*2, cameraRadius*2); }
-    }
+    
     
     void Update()
     {
